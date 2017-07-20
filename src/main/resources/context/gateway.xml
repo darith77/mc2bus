@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:amqp="http://www.springframework.org/schema/integration/amqp"
+             xmlns:jms="http://www.springframework.org/schema/integration/jms"
+             xmlns:stream="http://www.springframework.org/schema/integration/stream"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration.xsd
+ 			http://www.springframework.org/schema/integration/amqp
+ 				http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
+     		http://www.springframework.org/schema/integration/jms
+			http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+			http://www.springframework.org/schema/integration/stream
+			http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
+
+
+    <gateway id="booking" service-interface="edu.mum.ea.integration.BookingGateway"
+             default-request-channel="processBooking"/>
+
+    <channel id="fromAmqpBooking" />
+    <amqp:inbound-channel-adapter channel="fromAmqpBooking"
+                                  queue-names="directQueue" connection-factory="amqpConnectionFactory" />
+
+    <transformer id="transformBooking" ref="bookingTransformer"  input-channel="fromAmqpBooking" output-channel="toJmsBooking" />
+
+
+    <channel id="toJmsBooking" />
+
+    <jms:outbound-channel-adapter id="jmsOutBooking" channel="toJmsBooking" destination="bookingQueue" />
+
+
+
+    <beans:bean id="bookingTransformer" class="edu.mum.ea.integration.impl.BookingTransformerImpl" />
+
+</beans:beans>
