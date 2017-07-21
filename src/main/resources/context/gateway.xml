@@ -19,8 +19,6 @@
 			http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
 
 
-    <gateway id="booking" service-interface="edu.mum.ea.integration.BookingGateway"
-             default-request-channel="processBooking"/>
 
     <channel id="fromAmqpBooking" />
     <amqp:inbound-channel-adapter channel="fromAmqpBooking"
